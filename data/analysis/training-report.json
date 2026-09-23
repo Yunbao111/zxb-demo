@@ -1,0 +1,14 @@
+{
+  "status": "ready",
+  "method": "BERTopic",
+  "version": "0.17.4",
+  "embeddingModel": "sentence-transformers/all-MiniLM-L6-v2",
+  "documentCount": 428,
+  "windowCount": 893,
+  "topicCount": 5,
+  "outlierCount": 0,
+  "seed": 42,
+  "trainedAt": "2026-09-23T11:35:32.544422+00:00",
+  "corpusSha256": "c1196adb3e2f15188e93afdffba34b6dd24c408055404ca73574a46fe6ccd769",
+  "limitations": "Exploratory clusters on original English snapshots. No legal accuracy claim or measured retrieval improvement."
+}

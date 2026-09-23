@@ -1,0 +1,62 @@
+[
+  {
+    "id": "gpsr",
+    "celex": "32023R0988",
+    "number": "2023/988",
+    "name": "通用产品安全条例",
+    "short": "产品安全",
+    "published": "2023-05-23",
+    "description": "产品安全、经营者义务、远程销售与召回。",
+    "sourceUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023R0988",
+    "downloadUrl": "https://publications.europa.eu/resource/celex/32023R0988.ENG.xhtml",
+    "sha256": "ed8aebab3c8289c81268a1f21d12fcf38f7487072e908f6b16566fa6cd4f1735",
+    "bytes": 454130,
+    "version": "原始公布文本（非现行整合版）",
+    "fetchedAt": "2026-09-23T11:17:28.350540+00:00"
+  },
+  {
+    "id": "surveillance",
+    "celex": "32019R1020",
+    "number": "2019/1020",
+    "name": "市场监管与产品合规条例",
+    "short": "市场监管",
+    "published": "2019-06-25",
+    "description": "市场监管、经营者责任与进入欧盟市场的产品。",
+    "sourceUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32019R1020",
+    "downloadUrl": "https://publications.europa.eu/resource/celex/32019R1020.ENG.xhtml",
+    "sha256": "68073c53fd07d6f2b8a503327fab6b9851684a09893510bcfbc2cbff44b46920",
+    "bytes": 451346,
+    "version": "原始公布文本（非现行整合版）",
+    "fetchedAt": "2026-09-23T11:17:40.133351+00:00"
+  },
+  {
+    "id": "customs",
+    "celex": "32013R0952",
+    "number": "952/2013",
+    "name": "欧盟海关法典",
+    "short": "海关程序",
+    "published": "2013-10-10",
+    "description": "海关程序、货物原产地、估价与报关。",
+    "sourceUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32013R0952",
+    "downloadUrl": "https://publications.europa.eu/resource/celex/32013R0952.ENG.xhtml",
+    "sha256": "fcc050afde6ec43e3d0b21cc3181eec3ab6b67b3ffcd4f239345dbf6db292421",
+    "bytes": 1268838,
+    "version": "原始公布文本（非现行整合版）",
+    "fetchedAt": "2026-09-23T11:17:39.189873+00:00"
+  },
+  {
+    "id": "accreditation",
+    "celex": "32008R0765",
+    "number": "765/2008",
+    "name": "认可与市场监管条例",
+    "short": "认可与标志",
+    "published": "2008-08-13",
+    "description": "认可、合格评定与 CE 标志；收录的是原始文本。",
+    "sourceUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008R0765",
+    "downloadUrl": "https://publications.europa.eu/resource/celex/32008R0765.ENG.xhtml",
+    "sha256": "837732e0248a0e8777fe826b3ce5c1a97073dad7bf66c71eb675e940c0368aea",
+    "bytes": 374578,
+    "version": "原始公布文本（非现行整合版）",
+    "fetchedAt": "2026-09-23T11:17:28.341818+00:00"
+  }
+]

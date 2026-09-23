@@ -1,0 +1,166 @@
+{
+  "date": "2026-09-23T12:09:37.524Z",
+  "sampleSize": 10,
+  "metric": "Known relevant article hit@5 on ten hand-authored demo queries",
+  "baselineHitAt5": 1,
+  "withTopicsHitAt5": 1,
+  "limitations": "Small smoke set, not a representative benchmark or legal accuracy estimate. Do not claim a topic-model improvement from this alone.",
+  "rows": [
+    {
+      "q": "制造商 义务",
+      "expected": "gpsr:9",
+      "baseline": [
+        "gpsr:13",
+        "gpsr:9",
+        "gpsr:10",
+        "gpsr:20",
+        "gpsr:19"
+      ],
+      "withTopics": [
+        "gpsr:13",
+        "gpsr:9",
+        "gpsr:10",
+        "gpsr:20",
+        "gpsr:19"
+      ]
+    },
+    {
+      "q": "进口商 义务",
+      "expected": "gpsr:11",
+      "baseline": [
+        "gpsr:11",
+        "gpsr:20",
+        "gpsr:12",
+        "customs:218",
+        "gpsr:13"
+      ],
+      "withTopics": [
+        "gpsr:11",
+        "gpsr:20",
+        "gpsr:12",
+        "customs:218",
+        "gpsr:13"
+      ]
+    },
+    {
+      "q": "经销商 义务",
+      "expected": "gpsr:12",
+      "baseline": [
+        "gpsr:12",
+        "gpsr:20",
+        "customs:218",
+        "gpsr:13",
+        "gpsr:11"
+      ],
+      "withTopics": [
+        "gpsr:12",
+        "gpsr:20",
+        "customs:218",
+        "gpsr:13",
+        "gpsr:11"
+      ]
+    },
+    {
+      "q": "远程销售",
+      "expected": "gpsr:19",
+      "baseline": [
+        "gpsr:4",
+        "surveillance:6",
+        "gpsr:19",
+        "gpsr:3",
+        "customs:74"
+      ],
+      "withTopics": [
+        "gpsr:4",
+        "surveillance:6",
+        "gpsr:19",
+        "gpsr:3",
+        "customs:74"
+      ]
+    },
+    {
+      "q": "CE 标志",
+      "expected": "accreditation:30",
+      "baseline": [
+        "accreditation:30",
+        "accreditation:1",
+        "surveillance:26",
+        "accreditation:27",
+        "accreditation:2"
+      ],
+      "withTopics": [
+        "accreditation:30",
+        "accreditation:1",
+        "surveillance:26",
+        "accreditation:27",
+        "accreditation:2"
+      ]
+    },
+    {
+      "q": "proof of origin",
+      "expected": "customs:61",
+      "baseline": [
+        "customs:61",
+        "customs:64",
+        "customs:60",
+        "customs:63",
+        "customs:78"
+      ],
+      "withTopics": [
+        "customs:61",
+        "customs:64",
+        "customs:60",
+        "customs:63",
+        "customs:78"
+      ]
+    },
+    {
+      "q": "acquisition of origin",
+      "expected": "customs:60",
+      "baseline": [
+        "customs:60",
+        "customs:61",
+        "customs:64",
+        "customs:33",
+        "customs:67"
+      ],
+      "withTopics": [
+        "customs:60",
+        "customs:61",
+        "customs:64",
+        "customs:33",
+        "customs:67"
+      ]
+    },
+    {
+      "q": "2023/988 第 11 条",
+      "expected": "gpsr:11",
+      "baseline": [
+        "gpsr:11"
+      ],
+      "withTopics": [
+        "gpsr:11"
+      ]
+    },
+    {
+      "q": "2019/1020 第 4 条",
+      "expected": "surveillance:4",
+      "baseline": [
+        "surveillance:4"
+      ],
+      "withTopics": [
+        "surveillance:4"
+      ]
+    },
+    {
+      "q": "952/2013 第 170 条",
+      "expected": "customs:170",
+      "baseline": [
+        "customs:170"
+      ],
+      "withTopics": [
+        "customs:170"
+      ]
+    }
+  ]
+}
