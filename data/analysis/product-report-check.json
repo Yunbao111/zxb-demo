@@ -1,0 +1,102 @@
+{
+  "date": "2026-09-23T13:24:06.024Z",
+  "passed": true,
+  "products": [
+    {
+      "product": "家用收纳盒",
+      "findings": [
+        "product-storage",
+        "scope",
+        "safety",
+        "manufacturer",
+        "responsible",
+        "distance",
+        "customs",
+        "origin",
+        "national"
+      ]
+    },
+    {
+      "product": "棉质儿童T恤",
+      "findings": [
+        "product-clothing",
+        "feature-children",
+        "scope",
+        "safety",
+        "manufacturer",
+        "responsible",
+        "distance",
+        "customs",
+        "origin",
+        "national"
+      ]
+    },
+    {
+      "product": "220V电热水壶",
+      "findings": [
+        "classification-conflict",
+        "product-electrical",
+        "scope",
+        "sector",
+        "customs",
+        "origin",
+        "national"
+      ]
+    },
+    {
+      "product": "巧克力饼干",
+      "findings": [
+        "classification-conflict",
+        "product-food",
+        "scope",
+        "customs",
+        "origin",
+        "national"
+      ]
+    },
+    {
+      "product": "洗发水",
+      "findings": [
+        "classification-conflict",
+        "product-cosmetics",
+        "scope",
+        "customs",
+        "origin",
+        "national"
+      ]
+    },
+    {
+      "product": "木质椅子",
+      "findings": [
+        "product-furniture",
+        "scope",
+        "safety",
+        "manufacturer",
+        "responsible",
+        "distance",
+        "customs",
+        "origin",
+        "national"
+      ]
+    },
+    {
+      "product": "不锈钢饭盒",
+      "findings": [
+        "product-unknown",
+        "scope",
+        "customs",
+        "origin",
+        "national"
+      ]
+    }
+  ],
+  "checks": [
+    "same fields / different products",
+    "unknown product abstention",
+    "classification conflict",
+    "negated features",
+    "different detail text",
+    "citation integrity"
+  ],
+  "limitations": "Small rule-based regression set; does not measure general language understanding or legal accuracy."
+}

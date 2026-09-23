@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-23T12:09:37.524Z",
+  "date": "2026-09-23T13:24:06.025Z",
   "sampleSize": 10,
   "metric": "Known relevant article hit@5 on ten hand-authored demo queries",
   "baselineHitAt5": 1,

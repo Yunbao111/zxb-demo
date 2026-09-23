@@ -22,11 +22,12 @@ export function ReportWorkbench({openArticle,stage,onStage}:{openArticle:(id:str
    <p className="form-help">不确定的信息可以留待确认。填写越完整，核查清单越贴近实际业务。</p>
    <label htmlFor="report-country">目标国家 <span>必填</span></label><select id="report-country" value={profile.country} required onChange={e=>update('country',e.target.value)}><option value="">请选择目的地</option><optgroup label="欧盟成员国">{countries.map(c=><option key={c}>{c}</option>)}</optgroup><optgroup label="当前范围之外">{['英国','瑞士','挪威','其他非欧盟市场'].map(c=><option key={c}>{c}</option>)}</optgroup></select>
    <label htmlFor="report-product">具体产品 <span>必填</span></label><Input id="report-product" value={profile.product} required maxLength={200} placeholder="如：家用收纳盒（不接触食品）" onChange={e=>update('product',e.target.value)}/>
+   <label htmlFor="report-details">产品补充说明 <span>建议填写</span></label><textarea id="report-details" value={profile.details||''} maxLength={1000} rows={4} placeholder="例如：棉质儿童T恤，面向3–6岁，无绳带；或电热水壶，220V、1500W，不含电池。" onChange={e=>update('details',e.target.value)}/><p className="form-footnote">产品名称和说明会参与核查方向选择。识别结果需要确认，不会把未识别的产品套入完整通用报告。</p>
    {selects.map(s=><div key={s.key}><label htmlFor={`report-${s.key}`}>{s.label}</label><select id={`report-${s.key}`} value={profile[s.key]} onChange={e=>update(s.key,e.target.value as never)}>{Object.entries(s.options).map(([value,label])=><option value={value} key={value}>{label}</option>)}</select></div>)}
    <label htmlFor="report-consumer">是否面向消费者使用？</label><select id="report-consumer" value={profile.consumer} onChange={e=>update('consumer',e.target.value as Profile['consumer'])}><option value="unknown">尚未确定</option><option value="yes">是（含可预见的消费者使用）</option><option value="no">否，仅专业用途</option></select>
    {error&&<p role="alert" className="form-error">{error}</p>}
    <Button type="submit" className="generate-button">{report?'重新生成分析报告':'生成分析报告'}<ArrowRight size={16}/></Button>
-   <p className="form-footnote">本次输入仅在当前页面处理，不保存到服务器。产品名称用于描述情境，分类以你选择的信息为准。</p>
+   <p className="form-footnote">本次输入仅在当前页面处理，不保存到服务器。产品描述与行业选择不一致时，会提示核实分类。</p>
   </form></>}
   {showReport&&report&&<div className="report-output">
     <div className="report-return"><Button variant="ghost" onClick={()=>{onStage('scenario');window.scrollTo(0,0)}}><ArrowLeft size={16}/>修改贸易情境</Button><span>分析报告</span></div>
@@ -45,6 +46,6 @@ export function ReportWorkbench({openArticle,stage,onStage}:{openArticle:(id:str
      <footer className="report-limits"><h3>报告边界</h3>{report.limits.map(l=><p key={l}>{l}</p>)}<span>规则版本 {report.version} · 语料日期 {corpus.generatedAt.slice(0,10)}</span></footer>
     </article>
   </div>}
-  <footer className="about-platform"><details><summary>关于欧律通</summary><div className="about-content"><h3>让建议回到可核查的依据</h3><p>平台提供贸易情境分析、官方法规阅读与关联条文追溯。当前报告由业务条件与规则组织生成；BERTopic 在后台辅助发现相关条文，主题相似不代表法律适用。</p><h3>AI 解读与接入进度</h3><p>大模型解读模块已预留，尚未接入模型服务。后续将基于检索到的法条生成解释，并保留来源、版本和适用条件供核查。当前报告不是大模型生成的回答。</p><p>模型凭据将保存在服务端，不在浏览器填写或展示。当前收录原始公布文本，现行版本与专项要求仍需核实。</p></div></details></footer>
+  <footer className="about-platform"><details><summary>关于欧律通</summary><div className="about-content"><h3>让建议回到可核查的依据</h3><p>平台提供贸易情境分析、官方法规阅读与关联条文追溯。当前报告由产品描述识别、业务条件与规则组织生成；支持范围有限，无法识别时会说明资料不足。BERTopic 在后台辅助发现相关条文，主题相似不代表法律适用。</p><h3>AI 解读与接入进度</h3><p>大模型解读模块已预留，尚未接入模型服务。后续将基于检索到的法条生成解释，并保留来源、版本和适用条件供核查。当前报告不是大模型生成的回答。</p><p>模型凭据将保存在服务端，不在浏览器填写或展示。当前收录原始公布文本，现行版本与专项要求仍需核实。</p></div></details></footer>
  </section>
 }
