@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import { FreeReportClient, generateFreeReport, retrieveReportEvidence } from '../lib/ai/free-report';
+import { emptyProfile } from '../lib/report';
+import { articleMap } from '../lib/corpus';
+
+const profile={...emptyProfile,country:'德国',product:'弯头管件',details:'希望知道当地外贸法规值得注意的地方。'};
+const plan={queries:['customs tariff classification goods','origin of goods','customs declaration supporting documents'],questions:['管件材质、用途、承压参数和原产国是什么？']};
+const evidence=retrieveReportEvidence(plan.queries);
+assert(evidence.some(e=>e.id.startsWith('customs:')));
+for(const e of evidence)assert.equal(e.text,articleMap.get(e.id)!.paragraphs.slice(e.paragraphStart-1,e.paragraphEnd).join('\n\n'));
+const safety=retrieveReportEvidence(['consumer products safety manufacturer technical documentation']);
+assert.notDeepEqual(evidence.map(e=>e.id),safety.map(e=>e.id));
+let calls=0;
+const fakeFetch:typeof fetch=async(url,init)=>{
+ assert.equal(url,'https://openrouter.ai/api/v1/chat/completions');
+ const body=JSON.parse(init!.body as string);
+ assert.equal(body.model,'openrouter/free');assert(!body.models);assert(!body.plugins);
+ const input=JSON.parse(body.messages[1].content);
+ assert.equal(input.business?.product||input.product,profile.product);
+ const output=++calls===1?plan:{summary:'测试输出：管件用途和材质尚未明确，应先准备商品资料核实归类。',findings:[{title:'核实商品归类',status:'条件性要求',why:'向德国出口弯头管件',analysis:'测试桩内容，不是实际模型结果。',action:'准备材质和用途说明供归类核查。',documents:['产品规格书'],citations:[input.evidence[0].id]}],questions:['是否用于承压管路？']};
+ return Response.json({model:'mock/free',choices:[{finish_reason:'stop',message:{content:JSON.stringify(output)}}]});
+};
+const report=await generateFreeReport(profile,new FreeReportClient('test-only',fakeFetch));
+assert.equal(calls,2);assert.equal(report.model,'mock/free');assert(report.evidence?.length);
+assert(report.questions.some(q=>q.includes('承压')));
+await assert.rejects(()=>new FreeReportClient('').json('',{}),/API_NOT_CONFIGURED/);
+await assert.rejects(()=>new FreeReportClient('test',async()=>new Response('',{status:429})).json('',{}),/FREE_QUOTA_LIMIT/);
+await assert.rejects(()=>new FreeReportClient('test',async()=>new Response('',{status:401})).json('',{}),/API_KEY_INVALID/);
+await assert.rejects(()=>new FreeReportClient('test',async()=>Response.json({choices:[{finish_reason:'length',message:{content:'{}'}}]})).json('',{}),/INCOMPLETE_REPORT/);
+await assert.rejects(()=>new FreeReportClient('test',async()=>Response.json({choices:[{message:{content:'not JSON'}}]})).json('',{}),/INVALID_MODEL_OUTPUT/);
+let invalidCalls=0;
+await assert.rejects(()=>generateFreeReport(profile,new FreeReportClient('test',async()=>Response.json({choices:[{message:{content:JSON.stringify(++invalidCalls===1?plan:{summary:'invalid',findings:[{...report.findings[0],citations:['invented:999']}],questions:[]})}}]}))),/UNSUPPORTED_CITATION/);
+console.log('Free report: retrieval provenance, different search intents, 2-call mock orchestration, free-only routing, quota/auth/truncation/JSON/citation failures passed. Live model quality NOT tested.');

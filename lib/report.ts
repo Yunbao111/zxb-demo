@@ -11,7 +11,7 @@ export type Profile = {country:string;product:string;details?:string;industry:ke
 export const emptyProfile:Profile = {country:'',product:'',industry:'unknown',role:'unknown',channel:'unknown',direction:'unknown',consumer:'unknown'};
 export const sampleProfile:Profile = {country:'德国',product:'家用收纳盒（不接触食品）',industry:'general',role:'manufacturer',channel:'online',direction:'import',consumer:'yes'};
 export type Finding = {id:string;title:string;status:'先核实'|'条件性要求'|'资料缺口';why:string;analysis:string;action:string;documents:string[];citations:string[]};
-export type Report = {profile:Profile;createdAt:string;version:string;summary:string;coverage:'limited'|'outside';findings:Finding[];questions:string[];sources:string[];related:string[];limits:string[]};
+export type Report = {profile:Profile;createdAt:string;version:string;summary:string;coverage:'limited'|'outside';findings:Finding[];questions:string[];sources:string[];related:string[];limits:string[];model?:string;evidence?:{id:string;text:string;paragraphStart:number;paragraphEnd:number}[]};
 const limits = ['本报告根据已收录的原始公布文本生成，未合并后续修订，不能据此确认当前合规或准入。','仅覆盖四部欧盟层级法规正文；成员国法律、完整附件、产品专项法规、税率及认证程序尚未完整收录。','自动报告采用条件规则与预写解读，不调用大模型。BERTopic 仅用于相关条文推荐，主题相似不等于法律适用。'];
 
 /** Deterministic pre-assessment: explicit facts select reviewed rule templates.
