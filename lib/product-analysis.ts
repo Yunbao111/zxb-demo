@@ -16,7 +16,7 @@ const rules:ProductRule[] = [
 ];
 function hits(text:string,pattern:RegExp){
  const matches=[...text.matchAll(new RegExp(pattern.source,pattern.flags))];
- return matches.filter(m=>!/(?:不含|不带|不接触|不用于|不是|不|非|无|without\s|not\s|no\s)[\s\w\u4e00-\u9fff]{0,4}$/i.test(text.slice(Math.max(0,m.index!-12),m.index))).map(m=>m[0]);
+ return matches.filter(m=>!/(?:不含|不带|不接触|不用于|不是|非|无|without\s|not\s|no\s)[\s\w\u4e00-\u9fff]{0,4}$|不$/i.test(text.slice(Math.max(0,m.index!-12),m.index))).map(m=>m[0]);
 }
 const facets=[
  {id:'children',name:'儿童使用',terms:/儿童|婴儿|婴幼儿|婴童|童装|children|infant|baby/gi,action:'补充年龄范围和可预见使用方式，重点核查小部件、入口、绳带及误用情境；不把所有儿童用品自动归为玩具。',docs:['预期年龄','儿童接触部件及使用说明'],question:'具体年龄范围是多少？儿童是否会独立使用、入口或接触可拆部件？'},

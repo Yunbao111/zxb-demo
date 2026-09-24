@@ -77,6 +77,7 @@ const products=['家用收纳盒','棉质儿童T恤','220V电热水壶','巧克�
 const variants=products.map(product=>generateReport({...sampleProfile,product}));
 const signatures=variants.map(r=>JSON.stringify(r.findings.filter(f=>f.id.startsWith('product-')).map(f=>[f.id,f.action,f.documents])));
 assert.equal(new Set(signatures).size,products.length,'product changes must change actions and materials');
+['storage','clothing','electrical','food','cosmetics','furniture','tableware'].forEach((id,i)=>assert.ok(variants[i].findings.some(f=>f.id==='product-'+id),products[i]+' should match '+id));
 assert.ok(variants[1].findings.some(f=>f.id==='product-clothing'));
 assert.ok(variants[1].findings.some(f=>f.id==='feature-children'));
 assert.ok(variants[2].findings.some(f=>f.id==='classification-conflict'));

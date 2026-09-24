@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-23T13:24:06.024Z",
+  "date": "2026-09-24T07:58:40.639Z",
   "passed": true,
   "products": [
     {
@@ -82,7 +82,8 @@
     {
       "product": "不锈钢饭盒",
       "findings": [
-        "product-unknown",
+        "classification-conflict",
+        "product-tableware",
         "scope",
         "customs",
         "origin",
