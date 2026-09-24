@@ -16,7 +16,7 @@ export function ReportWorkbench({openArticle,stage,onStage}:{openArticle:(id:str
   if(busy)return;
   setBusy(true);setError('');
   const snapshot={...profile};
-  try{const response=await fetch('/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(snapshot),signal:AbortSignal.timeout(125000)});const data=await response.json() as {report?:Report;message?:string};if(!response.ok||!data.report)throw new Error(data.message||'报告未能生成，请重试。');setReport(data.report);onStage('document');window.scrollTo(0,0);setTimeout(()=>heading.current?.focus(),0)}catch(e){setError(e instanceof Error&&e.name==='TimeoutError'?'生成等待超时，请稍后再试。':(e as Error).message)}finally{setBusy(false)}
+  try{const response=await fetch('/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(snapshot),signal:AbortSignal.timeout(160000)});const data=await response.json() as {report?:Report;message?:string};if(!response.ok||!data.report)throw new Error(data.message||'报告未能生成，请重试。');setReport(data.report);onStage('document');window.scrollTo(0,0);setTimeout(()=>heading.current?.focus(),0)}catch(e){setError(e instanceof Error&&e.name==='TimeoutError'?'生成等待超时，请稍后再试。':(e as Error).message)}finally{setBusy(false)}
  }
  function download(){if(!report)return;const url=URL.createObjectURL(new Blob([reportText(report)],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='欧律通-初步分析报告.txt';a.click();URL.revokeObjectURL(url)}
  const selects=[{key:'industry',label:'行业 / 产品类别',options:industries},{key:'role',label:'企业在供应链中的角色',options:roles},{key:'channel',label:'销售渠道',options:channels},{key:'direction',label:'贸易方向',options:directions}] as const;

@@ -14,7 +14,7 @@ let calls=0;
 const fakeFetch:typeof fetch=async(url,init)=>{
  assert.equal(url,'https://openrouter.ai/api/v1/chat/completions');
  const body=JSON.parse(init!.body as string);
- assert.equal(body.model,'nex-agi/nex-n2.5-mini:free');assert(!body.models);assert(!body.plugins);
+ assert.equal(body.model,'nex-agi/nex-n2.5-mini:free');assert.equal(body.response_format.type,'json_schema');assert.equal(body.response_format.json_schema.strict,true);assert(!body.models);assert(!body.plugins);
  const input=JSON.parse(body.messages[1].content);
  assert.equal(input.business?.product||input.product,profile.product);
  const output=++calls===1?plan:{summary:'测试输出：管件用途和材质尚未明确，应先准备商品资料核实归类。',findings:[{title:'核实商品归类',status:'条件性要求',why:'向德国出口弯头管件',analysis:'测试桩内容，不是实际模型结果。',action:'准备材质和用途说明供归类核查。',documents:['产品规格书'],citations:[input.evidence[0].id]}],questions:['是否用于承压管路？']};
@@ -31,3 +31,5 @@ await assert.rejects(()=>new FreeReportClient('test',async()=>Response.json({cho
 let invalidCalls=0;
 await assert.rejects(()=>generateFreeReport(profile,new FreeReportClient('test',async()=>Response.json({choices:[{message:{content:JSON.stringify(++invalidCalls===1?plan:{summary:'invalid',findings:[{...report.findings[0],citations:['invented:999']}],questions:[]})}}]}))),/UNSUPPORTED_CITATION/);
 console.log('Free report: retrieval provenance, different search intents, 2-call mock orchestration, free-only routing, quota/auth/truncation/JSON/citation failures passed. Live model quality NOT tested.');
+
+await assert.rejects(()=>new FreeReportClient("test",async()=>{throw new DOMException("late","TimeoutError")}).json("",{}),/MODEL_TIMEOUT/);
