@@ -11,8 +11,19 @@ export type Profile = {country:string;product:string;details?:string;industry:ke
 export const emptyProfile:Profile = {country:'',product:'',industry:'unknown',role:'unknown',channel:'unknown',direction:'unknown',consumer:'unknown'};
 export const sampleProfile:Profile = {country:'德国',product:'家用收纳盒（不接触食品）',industry:'general',role:'manufacturer',channel:'online',direction:'import',consumer:'yes'};
 export type Finding = {id:string;title:string;status:'先核实'|'条件性要求'|'资料缺口';why:string;analysis:string;action:string;documents:string[];citations:string[]};
-export type Report = {profile:Profile;createdAt:string;version:string;summary:string;coverage:'limited'|'outside';findings:Finding[];questions:string[];sources:string[];related:string[];limits:string[];model?:string;evidence?:{id:string;text:string;paragraphStart:number;paragraphEnd:number}[]};
-const limits = ['本报告根据已收录的原始公布文本生成，未合并后续修订，不能据此确认当前合规或准入。','仅覆盖四部欧盟层级法规正文；成员国法律、完整附件、产品专项法规、税率及认证程序尚未完整收录。','自动报告采用条件规则与预写解读，不调用大模型。BERTopic 仅用于相关条文推荐，主题相似不等于法律适用。'];
+export type ReportPath = {label:string;detail:string;state:'事实输入'|'核查路径'|'证据边界'};
+export type Report = {profile:Profile;createdAt:string;version:string;summary:string;coverage:'limited'|'outside';findings:Finding[];questions:string[];sources:string[];related:string[];limits:string[];path:ReportPath[]};
+const limits = ['本报告根据已收录的原始公布文本和明确业务条件编排，未合并后续修订，不能据此确认当前合规或准入。','仅覆盖四部欧盟层级法规正文；成员国法律、完整附件、产品专项法规、税率及认证程序尚未完整收录。','本版不调用大模型或外部 API。BERTopic 仅用于补充阅读推荐，主题相似不等于法律适用。'];
+
+function reportPath(p:Profile, findingCount:number):ReportPath[]{
+ const facts=[`目标市场：${p.country}`,`产品：${p.product}`,`角色：${roles[p.role]}`,`渠道：${channels[p.channel]}`,`贸易：${directions[p.direction]}`];
+ const routes=[p.consumer==='yes'?'消费者用途':'消费者用途待确认',p.channel==='online'||p.channel==='both'?'线上销售':'销售渠道待确认',p.direction==='import'?'进口申报':'贸易方向待确认'];
+ return [
+  {label:'读取业务事实',detail:facts.join('；'),state:'事实输入'},
+  {label:'选择核查路径',detail:routes.join('；')+'。只处理已填写或可追溯的条件。',state:'核查路径'},
+  {label:'组织法规证据',detail:`生成 ${findingCount} 项核查事项；未收录的国家或专项法规直接列为资料缺口。`,state:'证据边界'},
+ ];
+}
 
 /** Deterministic pre-assessment: explicit facts select reviewed rule templates.
  * No topic similarity score is interpreted as applicability or legal risk.
@@ -24,7 +35,7 @@ export function generateReport(input:Profile,now=new Date()):Report {
  const isEU=countries.includes(p.country);
  if(!isEU){
   questions.push('目标市场是否包含欧盟成员国？请分别分析不同目的地。');
-  return {profile:p,createdAt:now.toISOString(),version:'rules-0.3',summary:`“${p.product}”的目标市场为${p.country}，超出本版欧盟共同规则的分析范围。当前不能生成该市场的合规义务清单。`,coverage:'outside',findings:[],questions,sources:[],related:[],limits:[...limits,'英国、瑞士、挪威等市场不能直接套用本版欧盟分析。']};
+  return {profile:p,createdAt:now.toISOString(),version:'evidence-composer-1.0',summary:`“${p.product}”的目标市场为${p.country}，超出本版欧盟共同规则的分析范围。当前不能生成该市场的合规义务清单。`,coverage:'outside',findings:[],questions,sources:[],related:[],limits:[...limits,'英国、瑞士、挪威等市场不能直接套用本版欧盟分析。'],path:reportPath(p,0)};
  }
  const product=analyzeProduct(p);
  questions.push(...product.questions);
@@ -63,9 +74,9 @@ export function generateReport(input:Profile,now=new Date()):Report {
  for(const id of sources)if(!articleMap.has(id))throw new Error(`缺失依据：${id}`);
  const related=[...new Set(sources.flatMap(id=>similarArticles(id).map(a=>a.id)))].filter(id=>!sources.includes(id)).slice(0,4);
  const summary=`${product.conflict?'产品分类存在冲突，先完成分类核实。':!product.recognized?'产品尚未识别：本次只生成有限的贸易核查清单。':`描述识别到${product.names.join('、')}，以下围绕其用途与材料展开核查。`}针对“${p.product}”进入${p.country}的情境，已整理 ${findings.length} 项核查事项。${excluded?'产品描述或行业选择指向 GPSR 排除类别，需确认分类并优先补充专项法规。':sector?'专项产品法规是当前最主要的资料缺口。':confirmedGeneral?'先核实产品安全、供应链角色与责任主体，再按销售渠道及贸易方向检查具体事项。':'产品适用范围尚未确认，先补齐分类和用途信息。'}${p.role==='unknown'?'企业角色未确定，暂不分配角色专属义务。':''}本报告未判定产品合规。`;
- return {profile:p,createdAt:now.toISOString(),version:'rules-0.3',summary,coverage:'limited',findings,questions,sources,related,limits:[...limits]};
+ return {profile:p,createdAt:now.toISOString(),version:'evidence-composer-1.0',summary,coverage:'limited',findings,questions,sources,related,limits:[...limits],path:reportPath(p,findings.length)};
 }
 export function reportText(r:Report){
  const p=r.profile;
- return [`欧律通 · 贸易合规初步分析报告`,`生成时间：${r.createdAt}｜规则版本：${r.version}`,`生成方式：本地规则分析，无大模型 API`, `业务情境：${p.country}｜${p.product}｜${industries[p.industry]}｜${roles[p.role]}｜${channels[p.channel]}｜${directions[p.direction]}`,`产品补充说明：${p.details||'未填写'}`,`\n分析摘要\n${r.summary}`,...r.findings.map((f,i)=>`\n${i+1}. ${f.title}【${f.status}】\n触发原因：${f.why}\n分析：${f.analysis}\n下一步：${f.action}\n准备材料：${f.documents.join('；')}\n依据：${f.citations.map(id=>`[${r.sources.indexOf(id)+1}]`).join(' ')||'资料缺口提示，未形成法律结论'}`),`\n待补信息\n${r.questions.map(q=>'- '+q).join('\n')||'仍需对照上述材料核实实际情况。'}`,`\n法条依据\n${r.sources.map((id,i)=>{const a=articleMap.get(id)!,s=corpus.sources.find(s=>s.id===a.lawId)!;return `[${i+1}] ${s.name} (${s.number}) 第 ${a.number} 条\n版本：${s.version}\n${a.sourceUrl}`}).join('\n\n')}`,`\n报告边界\n${r.limits.join('\n')}`].join('\n');
+ return [`欧律通 · 贸易合规初步分析报告`,`生成时间：${r.createdAt}｜证据编排版本：${r.version}`,`生成方式：依据已填写业务条件和收录法条编排，不调用大模型或外部 API`, `业务情境：${p.country}｜${p.product}｜${industries[p.industry]}｜${roles[p.role]}｜${channels[p.channel]}｜${directions[p.direction]}`,`产品补充说明：${p.details||'未填写'}`,`\n报告形成路径\n${r.path.map((x,i)=>`${i+1}. ${x.label}【${x.state}】\n${x.detail}`).join('\n')}`,`\n分析摘要\n${r.summary}`,...r.findings.map((f,i)=>`\n${i+1}. ${f.title}【${f.status}】\n触发原因：${f.why}\n分析：${f.analysis}\n下一步：${f.action}\n准备材料：${f.documents.join('；')}\n依据：${f.citations.map(id=>`[${r.sources.indexOf(id)+1}]`).join(' ')||'资料缺口提示，未形成法律结论'}`),`\n待补信息\n${r.questions.map(q=>'- '+q).join('\n')||'仍需对照上述材料核实实际情况。'}`,`\n法条依据\n${r.sources.map((id,i)=>{const a=articleMap.get(id)!,s=corpus.sources.find(s=>s.id===a.lawId)!;return `[${i+1}] ${s.name} (${s.number}) 第 ${a.number} 条\n版本：${s.version}\n${a.sourceUrl}`}).join('\n\n')}`,`\n报告边界\n${r.limits.join('\n')}`].join('\n');
 }

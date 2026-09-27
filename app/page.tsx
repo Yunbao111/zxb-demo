@@ -1,4 +1,7 @@
 'use client';
+// The interactive workbench has no request-time data dependency. Declaring
+// this keeps the competition build exportable for GitHub Pages.
+export const dynamic = 'force-static';
 import { useState, useRef, useEffect, type CSSProperties } from 'react';
 import { Search, BookOpen, Network, ArrowUpRight, ChevronRight, ChevronLeft, Info, X, CornerDownRight, ArrowRight, Download, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,7 +35,7 @@ export default function Home(){
  function submit(value=draft){setDraft(value);setQuery(value.trim());setPage(0);setView('search');setSelectedId(null);setPath([])}
  function exportEvidence(){if(!selected)return;const content=`欧律通 · 法规原文摘录\n${law(selected).name} (${law(selected).number})\nArticle ${selected.number} — ${selected.title}\n版本：${law(selected).version}\n来源：${selected.sourceUrl}\n\n${selected.text}\n\n研究演示，未合并后续修订，不构成现行合规结论。`;const u=URL.createObjectURL(new Blob([content],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download=`${selected.lawId}-article-${selected.number}.txt`;a.click();URL.revokeObjectURL(u)}
  return <div className="app-shell" style={{'--reading-size':`${fontSize}px`} as CSSProperties}><a className="skip-link" href="#workspace">跳到工作区</a>
- <header className="topbar"><a className="brand" href="/"><span className="brand-symbol"><Network size={24}/></span><span>欧律通<small>欧洲贸易法规工作台</small></span></a><nav aria-label="主导航">{([{id:'report',label:'分析报告',icon:Compass},{id:'search',label:'法规检索',icon:Search},{id:'library',label:'收录范围',icon:BookOpen}] as const).map(n=><Button key={n.id} variant="ghost" className={`nav-button ${view===n.id||(view==='law'&&n.id==='library')?'active':''}`} onClick={()=>setView(n.id)} aria-current={view===n.id||(view==='law'&&n.id==='library')?'page':undefined}><n.icon size={16}/>{n.label}</Button>)}</nav><span className="demo-pill"><i/>研究演示版</span></header>
+ <header className="topbar"><a className="brand" href="./"><span className="brand-symbol"><Network size={24}/></span><span>欧律通<small>欧洲贸易法规工作台</small></span></a><nav aria-label="主导航">{([{id:'report',label:'分析报告',icon:Compass},{id:'search',label:'法规检索',icon:Search},{id:'library',label:'收录范围',icon:BookOpen}] as const).map(n=><Button key={n.id} variant="ghost" className={`nav-button ${view===n.id||(view==='law'&&n.id==='library')?'active':''}`} onClick={()=>setView(n.id)} aria-current={view===n.id||(view==='law'&&n.id==='library')?'page':undefined}><n.icon size={16}/>{n.label}</Button>)}</nav><span className="demo-pill"><i/>研究演示版</span></header>
  <div className={`workspace-grid ${view==='report'?'report-page':view==='search'?`search-page ${selected?'has-reading':''}`:'library-page'}`} id="workspace">
  <main className={`main-area ${view!=='search'?'wide':''}`}>
  <div hidden={view!=='report'}><ReportWorkbench stage={reportStage} onStage={changeStage} openArticle={id=>{setView('search');setFilter('all');setQuery('');setDraft('');setPage(0);openArticle(id)}}/></div>

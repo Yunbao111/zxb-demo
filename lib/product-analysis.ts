@@ -13,6 +13,7 @@ const rules:ProductRule[] = [
  {id:'cosmetics',name:'化妆品候选',industry:'other',terms:/化妆品|口红|面霜|洗发水|护肤品|香水|cosmetics?|lipstick|shampoo/gi,focus:'需先按实际用途、成分和宣传内容核实化妆品身份，相关专项法规尚未收录。',action:'整理完整配方、预期接触部位及标签宣称，补查化妆品专项评估与责任主体要求；不从产品名称确认准入。',documents:['完整配方','使用部位及使用方式','包装与宣传文案'],question:'产品配方、使用部位和宣称功效是什么？是否涉及治疗或消毒宣称？'},
  {id:'chemicals',name:'化学制品候选',industry:'other',terms:/清洁剂|洗涤剂|消毒液|油漆|涂料|胶水|detergent|disinfectant|paint|adhesive/gi,focus:'化学制品需要按成分、浓度及用途确定进一步核查路径，当前四部法规不足以覆盖相关专项要求。',action:'获取成分、浓度、用途及现有安全数据资料，区分清洁与消毒等宣称；补查分类、标签及专项要求。',documents:['成分与浓度清单','现有安全数据表（如有）','使用方法和标签'],question:'成分、浓度、专业或消费者用途以及消毒等宣称是什么？'},
  {id:'tableware',name:'餐具及饮食容器候选',industry:'other',terms:/餐具|饭盒|保鲜盒|水杯|茶杯|奶瓶|保温杯|盘子|碗|food container|lunch box|tableware|drinking cup/gi,focus:'饮食容器应先确认食品接触用途及接触条件；食品接触材料并不等同于食品，不能直接按 GPSR 食品排除条款处理。',action:'确认直接接触部位、材料、温度和重复使用方式；补查食品接触材料专项规则，并整理已有迁移等测试资料。',documents:['接触食品部位及材料','接触时间与温度','已有材料和迁移资料'],question:'是否直接接触食品？接触何种食品、温度多高、是否重复使用？'},
+ {id:'pipe-fitting',name:'管件及工业零部件候选',industry:'other',terms:/弯头管件|管件|弯头|阀门|法兰|pipe fitting|elbow fitting|valve|flange/gi,focus:'管件或零部件不能只按名称判断是否属于建筑、承压设备、机械零件或一般消费品；材质、接触介质、压力和最终用途会改变核查路径。',action:'先收集材质、尺寸、额定压力、接触介质、安装位置和最终用途；再补查适用的专项法规、商品归类和进口资料。',documents:['材质及牌号说明','尺寸和额定压力参数','接触介质与安装用途说明','产品图纸或规格书'],question:'管件的材质、口径、额定压力、接触介质、安装位置和最终用途是什么？'},
 ];
 function hits(text:string,pattern:RegExp){
  const matches=[...text.matchAll(new RegExp(pattern.source,pattern.flags))];

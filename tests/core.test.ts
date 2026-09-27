@@ -2,8 +2,6 @@ import assert from 'node:assert/strict';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { corpus, articleMap } from '../lib/corpus';
 import { searchArticles } from '../lib/search';
-import { answerQuestion } from '../lib/ai/answer';
-import { CompatibleChatProvider } from '../lib/ai/provider';
 import { generateReport, reportText, sampleProfile, emptyProfile, countries } from '../lib/report';
 
 async function main(){
@@ -34,19 +32,10 @@ const queries=[
 ];
 const rows=queries.map(x=>({...x,baseline:searchArticles(x.q,'all',false).slice(0,5).map(h=>h.article.id),withTopics:searchArticles(x.q,'all',true).slice(0,5).map(h=>h.article.id)}));
 for(const row of rows)assert.ok(row.withTopics.includes(row.expected),`expected ${row.expected} for ${row.q}: ${row.withTopics}`);
-const response=await answerQuestion('进口商义务');
-assert.equal(response.mode,'retrieval_only');assert.ok(response.evidence.length>0);
-let providerCalled=false;
-const empty=await answerQuestion('zzzxxyynonexistent','all',{async generate(){providerCalled=true;return {answer:'not expected',citations:[]}}});
-assert.equal(empty.mode,'insufficient_evidence');assert.equal(providerCalled,false);
-const evidence=[{id:'gpsr:11',title:'Article 11',text:'Importers shall...',sourceUrl:'https://example.invalid',version:'original'}];
-const fakeFetch=(content:string)=>(async()=>Response.json({choices:[{message:{content}}]})) as typeof fetch;
-const cfg={baseUrl:'https://example.invalid/v1',apiKey:'test-placeholder',model:'fixture'};
-await assert.rejects(()=>new CompatibleChatProvider(cfg,fakeFetch(JSON.stringify({answer:'Claim [gpsr:999]',citations:['gpsr:999']}))).generate('q',evidence),/UNSUPPORTED_CITATION/);
-await assert.rejects(()=>new CompatibleChatProvider(cfg,fakeFetch(JSON.stringify({answer:'Claim without sources',citations:[]}))).generate('q',evidence),/INVALID_ANSWER/);
-const valid=await new CompatibleChatProvider(cfg,fakeFetch(JSON.stringify({answer:'基于原始文本的摘要 [gpsr:11]',citations:['gpsr:11']}))).generate('q',evidence);
-assert.deepEqual(valid.citations,['gpsr:11']);
 const report=generateReport(sampleProfile);
+assert.equal(report.version,'evidence-composer-1.0');
+assert.equal(report.path.length,3);
+assert.match(report.path[0].detail,/德国/);
 assert.ok(report.findings.some(f=>f.id==='manufacturer'));
 assert.ok(report.findings.some(f=>f.id==='distance'));
 assert.ok(report.findings.some(f=>f.id==='customs'));
@@ -95,6 +84,11 @@ assert.ok(!withoutBattery.findings.some(f=>['feature-battery','feature-wireless'
 const contact=generateReport({...sampleProfile,details:'用于接触食品'});
 assert.ok(contact.findings.some(f=>f.id==='feature-food-contact'));
 assert.ok(!report.findings.some(f=>f.id==='feature-food-contact'));
+const fitting=generateReport({...emptyProfile,country:'德国',product:'弯头管件',direction:'import'});
+assert.ok(fitting.findings.some(f=>f.id==='product-pipe-fitting'));
+assert.ok(fitting.findings.some(f=>f.id==='customs'));
+assert.ok(fitting.questions.some(q=>q.includes('额定压力')));
+assert.ok(!fitting.findings.some(f=>['manufacturer','safety','distance'].includes(f.id)));
 const mixed=generateReport({...sampleProfile,product:'台灯和饼干'});
 assert.ok(mixed.findings.some(f=>f.id==='classification-conflict'));
 assert.ok(!mixed.findings.some(f=>f.id==='manufacturer'));
@@ -102,6 +96,6 @@ assert.match(reportText(withBattery),/含锂电池/);
 writeFileSync('data/analysis/product-report-check.json',JSON.stringify({date:new Date().toISOString(),passed:true,products:variants.map(r=>({product:r.profile.product,findings:r.findings.map(f=>f.id)})),checks:['same fields / different products','unknown product abstention','classification conflict','negated features','different detail text','citation integrity'],limitations:'Small rule-based regression set; does not measure general language understanding or legal accuracy.'},null,2));
 mkdirSync('data/analysis',{recursive:true});
 writeFileSync('data/analysis/retrieval-check.json',JSON.stringify({date:new Date().toISOString(),sampleSize:rows.length,metric:'Known relevant article hit@5 on ten hand-authored demo queries',baselineHitAt5:rows.filter(r=>r.baseline.includes(r.expected)).length/rows.length,withTopicsHitAt5:rows.filter(r=>r.withTopics.includes(r.expected)).length/rows.length,limitations:'Small smoke set, not a representative benchmark or legal accuracy estimate. Do not claim a topic-model improvement from this alone.',rows},null,2));
-console.log('PASS: corpus integrity, references, 10 retrieval cases, disabled AI, citations; report scenarios: general goods, food exclusions, toys, roles, channels, directions, missing facts and 27 EU countries / out-of-scope');
+console.log('PASS: corpus integrity, references, 10 retrieval cases, evidence-composer report scenarios, product-specific paths and 27 EU countries / out-of-scope');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
